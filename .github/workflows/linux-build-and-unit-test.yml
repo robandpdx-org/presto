@@ -59,10 +59,10 @@ jobs:
       - name: 'Upload artifacts'
         uses: actions/upload-artifact@v2
         with:
-          name: presto-native-execution
+          name: presto-native-build
           path: |
-            _build/debug/presto_cpp/main/presto_server
-            _build/debug/velox/velox/functions/remote/server/velox_functions_remote_server_main
+            presto-native-execution/_build/debug/presto_cpp/main/presto_server
+            presto-native-execution/_build/debug/velox/velox/functions/remote/server/velox_functions_remote_server_main
   
   linux-presto-e2e-tests:
     needs: linux-build-and-unit-test
@@ -79,5 +79,6 @@ jobs:
       - name: 'Download artifacts'
         uses: actions/download-artifact@v2
         with:
-          name: presto-native-execution
+          name: presto-native-build
+          path: presto-native-execution/_build/debug
       - run: ls -R
