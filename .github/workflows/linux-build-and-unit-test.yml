@@ -110,3 +110,46 @@ jobs:
             -DDATA_DIR=${RUNNER_TEMP} \
             -Duser.timezone=America/Bahia_Banderas \
             -T1C
+
+  linux-spark-e2e-tests:
+    needs: linux-build-and-unit-test
+    runs-on: 2xlarge
+    container:
+      image: prestocpp/prestocpp-avx-centos:root-20230613
+    env:
+      MAVEN_OPTS: "-Xmx4G -XX:+ExitOnOutOfMemoryError"
+      MAVEN_INSTALL_OPTS: "-Xmx2G -XX:+ExitOnOutOfMemoryError"
+      MAVEN_FAST_INSTALL: "-B -V --quiet -T C1 -DskipTests -Dair.check.skip-all -Dmaven.javadoc.skip=true"
+      MAVEN_TEST: "-B -Dair.check.skip-all -Dmaven.javadoc.skip=true -DLogTestDurationListener.enabled=true --fail-at-end"
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - name: 'Download artifacts'
+        uses: actions/download-artifact@v2
+        with:
+          name: presto-native-build
+          path: presto-native-execution/_build/debug
+      - name: Install OpenJDK8
+        uses: actions/setup-java@v4.0.0
+        with:
+          distribution: 'adopt'
+          java-version: '8'
+      - name: Maven install
+        env:
+          MAVEN_OPTS: "-Xmx2G -XX:+ExitOnOutOfMemoryError"
+          MAVEN_FAST_INSTALL: "-B -V --quiet -T C1 -DskipTests -Dair.check.skip-all -Dmaven.javadoc.skip=true"
+        run: |
+          for i in $(seq 1 3); do mvn clean install $MAVEN_FAST_INSTALL -pl 'presto-native-execution' -am && s=0 && break || s=$? && sleep 10; done; (exit $s)
+      - name: 'Run spark e2e tests'
+        run: |
+          ls -R
+          export PRESTO_SERVER_PATH="${GITHUB_WORKSPACE}/presto-native-execution/_build/debug/presto_cpp/main/presto_server"
+          export TESTCLASSES="presto-native-execution/src/test/**/TestPrestoSpark*.java"
+
+          mvn test \
+            ${MAVEN_TEST} \
+            -pl 'presto-native-execution' \
+            -Dtest="${TESTCLASSES}" \
+            -DPRESTO_SERVER=${PRESTO_SERVER_PATH} \
+            -DDATA_DIR=${RUNNER_TEMP} \
+            -Duser.timezone=America/Bahia_Banderas \
+            -T1C
