@@ -95,6 +95,7 @@ jobs:
       - name: 'Run presto-native e2e tests'
         run: |
           export PRESTO_SERVER_PATH="${GITHUB_WORKSPACE}/presto-native-execution/_build/debug/presto_cpp/main/presto_server"
+          export TESTCLASSES="presto-native-execution/src/test/**/TestPrestoNative*.java"
 
           # TODO: neeed to enable remote function tests with
           # "-Ppresto-native-execution-remote-functions" once
@@ -104,6 +105,7 @@ jobs:
           mvn test \
             ${MAVEN_TEST} \
             -pl 'presto-native-execution' \
+            -Dtest="${TESTCLASSES}" \
             -DPRESTO_SERVER=${PRESTO_SERVER_PATH} \
             -DDATA_DIR=${RUNNER_TEMP} \
             -Duser.timezone=America/Bahia_Banderas \
