@@ -65,6 +65,7 @@ jobs:
             _build/debug/velox/velox/functions/remote/server/velox_functions_remote_server_main
   
   linux-presto-e2e-tests:
+    needs: linux-build-and-unit-test
     runs-on: 2xlarge
     container:
       image: prestocpp/prestocpp-avx-centos:root-20230613
