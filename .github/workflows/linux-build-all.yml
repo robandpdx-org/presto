@@ -8,7 +8,7 @@ on:
 
 jobs:
   linux-build-all:
-    runs-on: 2xlarge
+    runs-on: 16-core
     container:
       image: prestocpp/prestocpp-avx-centos:root-20230613
     env:

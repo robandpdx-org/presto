@@ -5,7 +5,7 @@ on:
 
 jobs:
   linux-build-and-unit-test:
-    runs-on: 2xlarge
+    runs-on: 16-core
     container:
       image: prestocpp/prestocpp-avx-centos:root-20230613
     env:
@@ -66,7 +66,7 @@ jobs:
   
   linux-presto-e2e-tests:
     needs: linux-build-and-unit-test
-    runs-on: 2xlarge
+    runs-on: 16-core
     container:
       image: prestocpp/prestocpp-avx-centos:root-20230613
     env:
@@ -135,7 +135,7 @@ jobs:
 
   linux-spark-e2e-tests:
     needs: linux-build-and-unit-test
-    runs-on: 2xlarge
+    runs-on: 16-core
     container:
       image: prestocpp/prestocpp-avx-centos:root-20230613
     env:
