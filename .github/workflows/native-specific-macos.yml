@@ -8,7 +8,7 @@ on:
 
 jobs:
   native-specific-macos:
-    runs-on: macos-12
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v4.1.1
       - name: Update submodules
@@ -17,7 +17,7 @@ jobs:
           make submodules
       - uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: 14.3.0
+          xcode-version: 14.3.1
       - name: "Setup MacOS"
         run: |
           set -xu
