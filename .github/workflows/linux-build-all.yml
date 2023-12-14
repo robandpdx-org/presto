@@ -1,7 +1,10 @@
 name: linux-build-all
 
 on:
+  workflow_dispatch:
   pull_request:
+    paths:
+      - 'presto-native-execution/**'
 
 jobs:
   linux-build-all:
@@ -15,11 +18,11 @@ jobs:
       MAVEN_TEST: "-B -Dair.check.skip-all -Dmaven.javadoc.skip=true -DLogTestDurationListener.enabled=true --fail-at-end"
     steps:
       - uses: actions/checkout@v4.1.1
-      - name: "Update velox"
+      - name: Update velox
         run: |
           cd presto-native-execution
           make velox-submodule
-      - name: "Install all adapter dependencies"
+      - name: Install all adapter dependencies
         run: |
           mkdir -p ${GITHUB_WORKSPACE}/adapter-deps/install
           source /opt/rh/gcc-toolset-9/enable
@@ -27,7 +30,7 @@ jobs:
           cd presto-native-execution
           DEPENDENCY_DIR=${GITHUB_WORKSPACE}/adapter-deps PROMPT_ALWAYS_RESPOND=n ./velox/scripts/setup-adapters.sh
           DEPENDENCY_DIR=${GITHUB_WORKSPACE}/adapter-deps PROMPT_ALWAYS_RESPOND=n ./scripts/setup-adapters.sh jwt
-      - name: "Build All"
+      - name: Build All
         run: |
           source /opt/rh/gcc-toolset-9/enable
           cd presto-native-execution
